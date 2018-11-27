@@ -1,9 +1,10 @@
  package main
 
  import (
-    "fmt"
     "io/ioutil"
     "net/http"
+    "log"
+    "html/template"
     )
 type Page struct {
   Title string
@@ -27,10 +28,24 @@ func loadPage(title string) (*Page, error) {
 func viewHandler(w http.ResponseWriter, r *http.Request){
   title := r.URL.Path[len("/view/"):]
   p, _ := loadPage(title)
-  fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+  t, _ := template.ParseFiles("view.html")
+  t.Execute(w, p)
+
+}
+
+func editHandler(w http.ResponseWriter, r *http.Request) {
+    title := r.URL.Path[len("/edit/"):]
+    p, err := loadPage(title)
+    if err != nil {
+        p = &Page{Title: title}
+    }
+    t, _ := template.ParseFiles("edit.html")
+    t.Execute(w, p)
 }
 
 func main() {
   http.HandleFunc("/view/", viewHandler)
+  http.HandleFunc("/edit/", editHandler)
+  http.HandleFunc("/save/", saveHandler)
   log.Fatal(http.ListenAndServe(":8080", nil))
 }
