@@ -3,10 +3,11 @@
  import (
     "fmt"
     "io/ioutil"
+    "net/http"
     )
 type Page struct {
   Title string
-  body []byte
+  Body []byte
 }
 func (p *Page) save() error {
   filename := p.Title + ".txt"
@@ -20,7 +21,16 @@ func loadPage(title string) (*Page, error) {
   if err != nil {
     return nil, err
   }
-  return &Page(Title: title, Body: body), nil
+  return &Page{Title: title, Body: body}, nil
 }
 
-func mai
+func viewHandler(w http.ResponseWriter, r *http.Request){
+  title := r.URL.Path[len("/view/"):]
+  p, _ := loadPage(title)
+  fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+}
+
+func main() {
+  http.HandleFunc("/view/", viewHandler)
+  log.Fatal(http.ListenAndServe(":8080", nil))
+}
