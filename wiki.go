@@ -14,8 +14,13 @@ func (p *Page) save() error {
 
 }
 
-func loadPage(title string) *Page {
+func loadPage(title string) (*Page, error) {
   filename  := title + ".txt"
-  body, _ := ioutil.ReadFile(filename)
-  return &Page(Title: title, Body: body)
+  body, err :=  ioutil.ReadFile(filename)
+  if err != nil {
+    return nil, err
+  }
+  return &Page(Title: title, Body: body), nil
 }
+
+func mai
