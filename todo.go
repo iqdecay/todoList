@@ -1,29 +1,40 @@
 package main
 
 import (
-	"errors"
-	"html/template"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"regexp"
-)
+    "io/ioutil"
+    "strings"
+    )
 
-// Define global variables
-var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
-var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
-
-type Page struct {
-	Title string
-	Body  []byte
+type Todo struct {
+	Title       string
+	TimeLeft    int // Numbers of day available for completion
+	Description string
 }
 
-func (p *Page) save() error {
-	filename := p.Title + ".txt"
-	return ioutil.WriteFile(filename, p.Body, 0600)
+type TodoList []Todo
 
+func (t *TodoList) save() error {
+	filename := "todo.txt"
+    content := t.buildRep()
+	return ioutil.WriteFile(filename, []byte(content), 0600)
 }
 
+func (t TodoList) buildRep() string {
+    var b strings.Builder
+	for _, todo := range t {
+        title := todo.Title + "\n"
+        (&b).Grow(len(title))
+        _, _ = (&b).Write([]byte(title))
+        daysLeft := string(todo.TimeLeft)+"\n"
+        (&b).Grow(len(daysLeft))
+        _, _ = (&b).Write([]byte(daysLeft))
+        mission := todo.Description + "\n"
+        (&b).Grow(len(mission))
+        _, _ = (&b).Write([]byte(mission))
+	}
+    return (&b).String()
+}
+/*
 func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 	m := validPath.FindStringSubmatch(r.URL.Path)
 	if m == nil {
@@ -102,10 +113,10 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 		fn(w, r, m[2])
 	}
 }
-
+*/
 func main() {
-	http.HandleFunc("/view/", makeHandler(viewHandler))
-	http.HandleFunc("/edit/", makeHandler(editHandler))
-	http.HandleFunc("/save/", makeHandler(saveHandler))
-	log.Fatal(http.ListenAndServe(":8080", nil))
+    a := Todo{"task1",1,"this is task 1"}
+    b := Todo{"task2",31,"this is task 2"}
+    c := TodoList{a, b}
+    c.save()
 }
