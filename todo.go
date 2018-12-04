@@ -3,6 +3,7 @@ package main
 import (
     "io/ioutil"
     "strings"
+    "strconv"
     )
 
 type Todo struct {
@@ -25,7 +26,7 @@ func (t TodoList) buildRep() string {
         title := todo.Title + "\n"
         (&b).Grow(len(title))
         _, _ = (&b).Write([]byte(title))
-        daysLeft := string(todo.TimeLeft)+"\n"
+        daysLeft := strconv.Itoa(todo.TimeLeft)+"\n"
         (&b).Grow(len(daysLeft))
         _, _ = (&b).Write([]byte(daysLeft))
         mission := todo.Description + "\n"
