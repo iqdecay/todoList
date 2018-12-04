@@ -4,6 +4,8 @@ import (
     "io/ioutil"
     "strings"
     "strconv"
+    "fmt"
+    "reflect"
     )
 
 type Todo struct {
@@ -12,12 +14,20 @@ type Todo struct {
 	Description string
 }
 
+const filename = "tasklist"
+
 type TodoList []Todo
 
 func (t *TodoList) save() error {
-	filename := "todo.txt"
     content := t.buildRep()
 	return ioutil.WriteFile(filename, []byte(content), 0600)
+}
+
+func loadTodoList() (TodoList) {
+    file, _ := ioutil.ReadFile(filename)
+    fmt.Println(file, reflect.TypeOf(file))
+    return TodoList{}
+
 }
 
 func (t TodoList) buildRep() string {
@@ -36,6 +46,9 @@ func (t TodoList) buildRep() string {
     return (&b).String()
 }
 /*
+
+
+
 func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 	m := validPath.FindStringSubmatch(r.URL.Path)
 	if m == nil {
@@ -43,15 +56,6 @@ func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 		return "", errors.New("Invalid Page Title")
 	}
 	return m[2], nil // The title is the second subexpression
-}
-
-func loadPage(title string) (*Page, error) {
-	filename := title + ".txt"
-	body, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	return &Page{Title: title, Body: body}, nil
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
@@ -120,4 +124,7 @@ func main() {
     b := Todo{"task2",31,"this is task 2"}
     c := TodoList{a, b}
     c.save()
+    loadTodoList()
+    
+
 }
