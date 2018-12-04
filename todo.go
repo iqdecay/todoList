@@ -4,14 +4,19 @@ import (
     "io/ioutil"
     "strings"
     "strconv"
+//    "reflect"
     "fmt"
-    "reflect"
+    "time"
     )
 
+type Date struct {
+    Day, Month, Year int
+}
 type Todo struct {
 	Title       string
 	TimeLeft    int // Numbers of day available for completion
 	Description string
+    Creation time.time
 }
 
 const filename = "tasklist"
@@ -25,10 +30,13 @@ func (t *TodoList) save() error {
 
 func loadTodoList() (TodoList) {
     file, _ := ioutil.ReadFile(filename)
-    fmt.Println(file, reflect.TypeOf(file))
+    fileAsString := string(file)
+    fmt.Println(fileAsString)
+
     return TodoList{}
 
 }
+
 
 func (t TodoList) buildRep() string {
     var b strings.Builder
@@ -120,11 +128,10 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 */
 func main() {
+    fmt.Println("Program running")
     a := Todo{"task1",1,"this is task 1"}
     b := Todo{"task2",31,"this is task 2"}
     c := TodoList{a, b}
     c.save()
     loadTodoList()
-    
-
 }
