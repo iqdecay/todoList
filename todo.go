@@ -1,22 +1,23 @@
 package main
 
 import (
-    "io/ioutil"
-    "strings"
-    "strconv"
-//    "reflect"
-    "fmt"
-    "time"
-    )
+	"io/ioutil"
+	"strconv"
+	"strings"
+	//    "reflect"
+	"fmt"
+	"time"
+)
 
 type Date struct {
-    Day, Month, Year int
+	Day, Month, Year int
 }
+
 type Todo struct {
 	Title       string
-	TimeLeft    int // Numbers of day available for completion
 	Description string
-    Creation time.time
+	Creation    Date
+    Due         Date
 }
 
 const filename = "tasklist"
@@ -24,35 +25,35 @@ const filename = "tasklist"
 type TodoList []Todo
 
 func (t *TodoList) save() error {
-    content := t.buildRep()
+	content := t.buildRep()
 	return ioutil.WriteFile(filename, []byte(content), 0600)
 }
 
-func loadTodoList() (TodoList) {
-    file, _ := ioutil.ReadFile(filename)
-    fileAsString := string(file)
-    fmt.Println(fileAsString)
+func loadTodoList() TodoList {
+	file, _ := ioutil.ReadFile(filename)
+	fileAsString := string(file)
+    reader = strings.NewReader(fileAsString)
 
-    return TodoList{}
+	return TodoList{}
 
 }
-
 
 func (t TodoList) buildRep() string {
-    var b strings.Builder
+	var b strings.Builder
 	for _, todo := range t {
-        title := todo.Title + "\n"
-        (&b).Grow(len(title))
-        _, _ = (&b).Write([]byte(title))
-        daysLeft := strconv.Itoa(todo.TimeLeft)+"\n"
-        (&b).Grow(len(daysLeft))
-        _, _ = (&b).Write([]byte(daysLeft))
-        mission := todo.Description + "\n"
-        (&b).Grow(len(mission))
-        _, _ = (&b).Write([]byte(mission))
+		title := todo.Title + "\n"
+		(&b).Grow(len(title))
+		_, _ = (&b).Write([]byte(title))
+		daysLeft := strconv.Itoa(todo.TimeLeft) + "\n"
+		(&b).Grow(len(daysLeft))
+		_, _ = (&b).Write([]byte(daysLeft))
+		mission := todo.Description + "\n"
+		(&b).Grow(len(mission))
+		_, _ = (&b).Write([]byte(mission))
 	}
-    return (&b).String()
+	return (&b).String()
 }
+
 /*
 
 
@@ -128,10 +129,10 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 */
 func main() {
-    fmt.Println("Program running")
-    a := Todo{"task1",1,"this is task 1"}
-    b := Todo{"task2",31,"this is task 2"}
-    c := TodoList{a, b}
-    c.save()
-    loadTodoList()
+	fmt.Println("Program running")
+	a := Todo{"task1", 1, "this is task 1"}
+	b := Todo{"task2", 31, "this is task 2"}
+	c := TodoList{a, b}
+	c.save()
+	loadTodoList()
 }
