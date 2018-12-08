@@ -30,18 +30,19 @@ func (t *TodoList) save() error {
 func loadTodoList() TodoList {
 	// Implement it correctly
 	file, _ := ioutil.ReadFile(filename)
-	fileAsString := string(file)
-	reader := strings.NewReader(fileAsString)
+	reader := string(file)
 	fmt.Println("reader :",reader)
 	lastNewlineIndex := -1
 	var todos TodoList
+	var todo Todo
 	for index, char := range reader{
 		if index == len(reader)-1 || char == '\n' {
 			if index == len(reader) -1 {
-				todo := stringToTask(reader[lastNewLineIndex+1:])
+				todo = stringToTask(reader[lastNewlineIndex+1:])
 			}	else {
-				todo := stringToTask(reader[lastNewlinIndex+1:index])
+				todo = stringToTask(reader[lastNewlineIndex+1:index])
 			}
+			lastNewlineIndex = index
 			todos = append(todos, todo)
 		}
 	}
