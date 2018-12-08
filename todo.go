@@ -1,12 +1,10 @@
 package main
 
 import (
-	"io/ioutil"
-	"strconv"
-	"strings"
-	//    "reflect"
 	"fmt"
-	"time"
+	"io/ioutil"
+	"strings"
+	// Think about importing time
 )
 
 type Date struct {
@@ -44,16 +42,20 @@ func (d Date) convertToString() string {
 }
 
 func convertToDate(s string) Date {
-	var lastSlashIndex int
-	date := []string
-	for index, char := range(s) {
-		if char == "/" {
-			date = append(date, s[lastSlashIndex:index])
+	lastSlashIndex := -1
+	var date []string
+	for index, char := range s {
+		if char == '/' || index == len(s)-1 {
+			if index == len(s)-1 {
+				date = append(date, s[lastSlashIndex+1:])
+			} else {
+				date = append(date, s[lastSlashIndex+1:index])
+			}
 			lastSlashIndex = index
 		}
 	}
 	d, m, y := date[0], date[1], date[2]
-	return Date(d, m, y)
+	return Date{d, m, y}
 }
 
 func (t TodoList) buildRep() string {
@@ -150,9 +152,5 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 */
 func main() {
 	fmt.Println("Program running")
-	a := Todo{"task1", 1, "this is task 1"}
-	b := Todo{"task2", 31, "this is task 2"}
-	c := TodoList{a, b}
-	c.save()
-	loadTodoList()
+	fmt.Println(convertToDate("01/05/1997"))
 }
