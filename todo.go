@@ -28,12 +28,12 @@ func (t *TodoList) save() error {
 }
 
 func loadTodoList() TodoList {
+	// Implement it correctly
 	file, _ := ioutil.ReadFile(filename)
 	fileAsString := string(file)
 	reader := strings.NewReader(fileAsString)
 	fmt.Println(reader)
 
-	return TodoList{}
 
 }
 
@@ -61,17 +61,24 @@ func convertToDate(s string) Date {
 func (t TodoList) buildRep() string {
 	var b strings.Builder
 	for _, todo := range t {
+		// Write title
 		title := todo.Title + "\n"
 		(&b).Grow(len(title))
 		_, _ = (&b).Write([]byte(title))
-		// Add the dueDate and creationDate fields
+		// Write dueDate
 		dueDate := todo.Due.convertToString()
 		(&b).Grow(len(dueDate))
 		_, _ = (&b).Write([]byte(dueDate))
+		// Write creationDate
+		creationDate := todo.Creation.convertToString()
+		(&b).Grow(len(creationDate))
+		_, _ = (&b).Write([]byte(creationDate))
+		// Write Description
 		mission := todo.Description + "\n"
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
 	}
+	// Write the whole todo
 	return (&b).String()
 }
 
@@ -152,5 +159,12 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 */
 func main() {
 	fmt.Println("Program running")
-	fmt.Println(convertToDate("01/05/1997"))
+	d1 := convertToDate("01/05/1997")
+	d2 := convertToDate("07/12/2018")
+	a := Todo{"task 1", "perform task 1", d1, d2}
+	b := Todo{"task 2", "perform task 2", d2, d1}
+	t := TodoList{a, b}
+	t.save()
+	c := loadTodoList()
+	fmt.Println(c)
 }
