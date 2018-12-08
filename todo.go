@@ -32,9 +32,20 @@ func loadTodoList() TodoList {
 	file, _ := ioutil.ReadFile(filename)
 	fileAsString := string(file)
 	reader := strings.NewReader(fileAsString)
-	fmt.Println(reader)
-
-
+	fmt.Println("reader :",reader)
+	lastNewlineIndex := -1
+	var todos TodoList
+	for index, char := range reader{
+		if index == len(reader)-1 || char == '\n' {
+			if index == len(reader) -1 {
+				todo := stringToTask(reader[lastNewLineIndex+1:])
+			}	else {
+				todo := stringToTask(reader[lastNewlinIndex+1:index])
+			}
+			todos = append(todos, todo)
+		}
+	}
+	return todos
 }
 
 func (d Date) convertToString() string {
@@ -62,15 +73,15 @@ func (t TodoList) buildRep() string {
 	var b strings.Builder
 	for _, todo := range t {
 		// Write title
-		title := todo.Title + "\n"
+		title := todo.Title + ";"
 		(&b).Grow(len(title))
 		_, _ = (&b).Write([]byte(title))
 		// Write dueDate
-		dueDate := todo.Due.convertToString()
+		dueDate := todo.Due.convertToString() + ";"
 		(&b).Grow(len(dueDate))
 		_, _ = (&b).Write([]byte(dueDate))
 		// Write creationDate
-		creationDate := todo.Creation.convertToString()
+		creationDate := todo.Creation.convertToString() + ";"
 		(&b).Grow(len(creationDate))
 		_, _ = (&b).Write([]byte(creationDate))
 		// Write Description
