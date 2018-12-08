@@ -10,14 +10,14 @@ import (
 )
 
 type Date struct {
-	Day, Month, Year int
+	Day, Month, Year string
 }
 
 type Todo struct {
 	Title       string
 	Description string
 	Creation    Date
-  Due         Date
+	Due         Date
 }
 
 const filename = "tasklist"
@@ -32,18 +32,28 @@ func (t *TodoList) save() error {
 func loadTodoList() TodoList {
 	file, _ := ioutil.ReadFile(filename)
 	fileAsString := string(file)
-  reader = strings.NewReader(fileAsString)
+	reader := strings.NewReader(fileAsString)
 	fmt.Println(reader)
 
 	return TodoList{}
 
 }
 
-func (d Date) convertToString() (string){
-	day := strconv.Itoa(d.Day)
-	month := strconv.Itoa(d.Month)
-	year := strconv.Itoa(d.Year)
-	return day+"/"+month+"/"+year
+func (d Date) convertToString() string {
+	return d.Day + "/" + d.Month + "/" + d.Year
+}
+
+func convertToDate(s string) Date {
+	var lastSlashIndex int
+	date := []string
+	for index, char := range(s) {
+		if char == "/" {
+			date = append(date, s[lastSlashIndex:index])
+			lastSlashIndex = index
+		}
+	}
+	d, m, y := date[0], date[1], date[2]
+	return Date(d, m, y)
 }
 
 func (t TodoList) buildRep() string {
@@ -53,6 +63,9 @@ func (t TodoList) buildRep() string {
 		(&b).Grow(len(title))
 		_, _ = (&b).Write([]byte(title))
 		// Add the dueDate and creationDate fields
+		dueDate := todo.Due.convertToString()
+		(&b).Grow(len(dueDate))
+		_, _ = (&b).Write([]byte(dueDate))
 		mission := todo.Description + "\n"
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
@@ -61,7 +74,8 @@ func (t TodoList) buildRep() string {
 }
 
 /*
-
+Note : the entered date in the HTML form should satisfy the following Regexp :
+"(0[1-9])|(1[012])"
 
 
 func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
