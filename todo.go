@@ -17,7 +17,7 @@ type Todo struct {
 	Title       string
 	Description string
 	Creation    Date
-    Due         Date
+  Due         Date
 }
 
 const filename = "tasklist"
@@ -32,10 +32,18 @@ func (t *TodoList) save() error {
 func loadTodoList() TodoList {
 	file, _ := ioutil.ReadFile(filename)
 	fileAsString := string(file)
-    reader = strings.NewReader(fileAsString)
+  reader = strings.NewReader(fileAsString)
+	fmt.Println(reader)
 
 	return TodoList{}
 
+}
+
+func (d Date) convertToString() (string){
+	day := strconv.Itoa(d.Day)
+	month := strconv.Itoa(d.Month)
+	year := strconv.Itoa(d.Year)
+	return day+"/"+month+"/"+year
 }
 
 func (t TodoList) buildRep() string {
@@ -44,9 +52,7 @@ func (t TodoList) buildRep() string {
 		title := todo.Title + "\n"
 		(&b).Grow(len(title))
 		_, _ = (&b).Write([]byte(title))
-		daysLeft := strconv.Itoa(todo.TimeLeft) + "\n"
-		(&b).Grow(len(daysLeft))
-		_, _ = (&b).Write([]byte(daysLeft))
+		// Add the dueDate and creationDate fields
 		mission := todo.Description + "\n"
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
