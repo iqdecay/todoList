@@ -31,16 +31,16 @@ func loadTodoList() TodoList {
 	// Implement it correctly
 	file, _ := ioutil.ReadFile(filename)
 	reader := string(file)
-	fmt.Println("reader :",reader)
+	fmt.Println("reader :", reader)
 	lastNewlineIndex := -1
 	var todos TodoList
 	var todo Todo
-	for index, char := range reader{
+	for index, char := range reader {
 		if index == len(reader)-1 || char == '\n' {
-			if index == len(reader) -1 {
+			if index == len(reader)-1 {
 				todo = stringToTask(reader[lastNewlineIndex+1:])
-			}	else {
-				todo = stringToTask(reader[lastNewlineIndex+1:index])
+			} else {
+				todo = stringToTask(reader[lastNewlineIndex+1 : index])
 			}
 			lastNewlineIndex = index
 			todos = append(todos, todo)
@@ -49,11 +49,40 @@ func loadTodoList() TodoList {
 	return todos
 }
 
+func stringToTask(s string) Todo {
+	lastCommaIndex := -1
+	fieldIndex := 0
+	var fieldValue string
+	todo := Todo{}
+	for index, char := range s {
+		if index == len(s) || char == ';' {
+			fieldIndex += 1
+			if fieldIndex != 4 {
+				fieldValue = s[lastCommaIndex+1 : index]
+			} else {
+				fieldValue = s[lastCommaIndex+1:]
+			}
+			switch fieldIndex {
+			case 1:
+				todo.Title = fieldValue
+			case 2:
+				todo.Description = fieldValue
+			case 3:
+				todo.Creation = stringToDate(fieldValue)
+			case 4:
+				todo.Creation = stringToDate(fieldValue)
+			}
+			lastCommaIndex = index
+		}
+	}
+	return todo
+}
+
 func (d Date) convertToString() string {
 	return d.Day + "/" + d.Month + "/" + d.Year
 }
 
-func convertToDate(s string) Date {
+func stringToDate(s string) Date {
 	lastSlashIndex := -1
 	var date []string
 	for index, char := range s {
@@ -171,8 +200,8 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 */
 func main() {
 	fmt.Println("Program running")
-	d1 := convertToDate("01/05/1997")
-	d2 := convertToDate("07/12/2018")
+	d1 := stringToDate("01/05/1997")
+	d2 := stringToDate("07/12/2018")
 	a := Todo{"task 1", "perform task 1", d1, d2}
 	b := Todo{"task 2", "perform task 2", d2, d1}
 	t := TodoList{a, b}
