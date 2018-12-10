@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"strings"
 	"net/http"
+	"log"
+	"html/templates"
 	// Think about importing time
 )
 
