@@ -1,14 +1,13 @@
 <h1>List of all todos</h1>
 
-<ul> 
+<ul>
     {{range .}}
     <li>
         <h2> {{.Title}} </h2>
-        <h3> {{.Creation}} </br>
-             Due :{{.Due}} </br>
+              {{.Due}}
+              {{.Creation}}
              Description :{{.Description}}
-        </h3>
+             Creation : {{.Creation}}
     </li>
     {{end}}
 </ul>
-

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"strings"
 	"net/http"
@@ -56,7 +55,7 @@ func stringToTask(s string) Todo {
 	var fieldValue string
 	todo := Todo{}
 	for index, char := range s {
-		if index == len(s) || char == ';' {
+		if index == len(s) - 1 || char == ';' {
 			fieldIndex += 1
 			if fieldIndex != 4 {
 				fieldValue = s[lastCommaIndex+1 : index]
@@ -112,14 +111,14 @@ func (t TodoList) buildRep() string {
 		mission := todo.Description + ";"
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
-		// Write dueDate
-		dueDate := todo.Due.convertToString() + ";"
-		(&b).Grow(len(dueDate))
-		_, _ = (&b).Write([]byte(dueDate))
 		// Write creationDate
-		creationDate := todo.Creation.convertToString()+ "\n"
-		(&b).Grow(len(creationDate))
-		_, _ = (&b).Write([]byte(creationDate))
+		creation := todo.Creation.convertToString()+ ";"
+		(&b).Grow(len(creation))
+		_, _ = (&b).Write([]byte(creation))
+		// Write dueDate
+		due := todo.Due.convertToString() + "\n"
+		(&b).Grow(len(due))
+		_, _ = (&b).Write([]byte(due))
 	}
 	// Write the whole todo
 	return (&b).String()
@@ -199,11 +198,6 @@ func main() {
 	b := Todo{"task 2", "perform task 2", d2, d1}
 	t := TodoList{a, b}
 	t.save()
-	c := loadTodoList()
-	for _, t := range c {
-		fmt.Println(t)
-		fmt.Println("this is the end of the task")
-	}
 	http.HandleFunc("/", viewHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
