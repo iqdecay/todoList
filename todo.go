@@ -28,7 +28,7 @@ func (t *TodoList) save() error {
 }
 
 func loadTodoList() TodoList {
-	// Implement it correctly
+	// Add an error when needed
 	file, _ := ioutil.ReadFile(filename)
 	reader := string(file)
 	fmt.Println("reader :", reader)
@@ -62,6 +62,7 @@ func stringToTask(s string) Todo {
 			} else {
 				fieldValue = s[lastCommaIndex+1:]
 			}
+			// This is messy but I don't have any other ideas
 			switch fieldIndex {
 			case 1:
 				todo.Title = fieldValue
@@ -123,6 +124,19 @@ func (t TodoList) buildRep() string {
 	return (&b).String()
 }
 
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	todos := loadTodoList()
+	renderTemplate(w, "view", todos)
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
+	err := templates.ExecuteTemplate(w, tmpl+".html", t)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+
 /*
 Note : the entered date in the HTML form should satisfy the following Regexp :
 "(0[1-9])|(1[012])"
@@ -136,21 +150,6 @@ func getTitle(w http.ResponseWriter, r *http.Request) (string, error) {
 	}
 	return m[2], nil // The title is the second subexpression
 }
-
-func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	title, err := getTitle(w, r)
-	if err != nil {
-		return
-	}
-	p, err := loadPage(title)
-	if err != nil {
-		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
-		return
-	}
-	renderTemplate(w, "view", p)
-
-}
-
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	title, err := getTitle(w, r)
 	if err != nil {
@@ -176,13 +175,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 		return
 	}
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
-}
-
-func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", p)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
 
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
