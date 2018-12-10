@@ -3,11 +3,22 @@
 <ul>
     {{range .}}
     <li>
-        <h2> {{.Title}} </h2>
-              {{.Due}}
-              {{.Creation}}
-             Description :{{.Description}}
-             Creation : {{.Creation}}
+        <h2>
+          {{.Title}}
+        </h2>
+        <h1>
+          <ul>
+            <li>
+              Created : {{.Creation}} </br>
+            </li>
+            <li>
+              Due date : {{.Due}} </br>
+            </li>
+              <li>
+              Description : {{.Description}}
+            </li>
+          </ul>
+        </h1>
     </li>
     {{end}}
 </ul>
