@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"net/http"
 	// Think about importing time
 )
 
@@ -129,12 +130,13 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "view", todos)
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
+func renderTemplate(w http.ResponseWriter, tmpl string, t TodoList) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
+
 
 /*
 Note : the entered date in the HTML form should satisfy the following Regexp :
@@ -190,7 +192,9 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 */
 func main() {
-	fmt.Println("Program running")
+	http.HandleFunc("/", viewHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
+	/*fmt.Println("Program running")
 	d1 := stringToDate("01/05/1997")
 	d2 := stringToDate("07/12/2018")
 	a := Todo{"task 1", "perform task 1", d1, d2}
@@ -199,4 +203,5 @@ func main() {
 	t.save()
 	c := loadTodoList()
 	fmt.Println(c)
+	*/
 }
