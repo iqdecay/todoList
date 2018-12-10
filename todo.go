@@ -6,7 +6,7 @@ import (
 	"strings"
 	"net/http"
 	"log"
-	"html/templates"
+	"html/template"
 	// Think about importing time
 )
 
@@ -133,6 +133,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t TodoList) {
+	templates := template.Must(template.ParseFiles("view.html"))
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
