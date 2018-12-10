@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"net/http"
-	//"log"
+	"log"
 	"html/template"
 	// Think about importing time
 )
@@ -109,7 +109,7 @@ func (t TodoList) buildRep() string {
 		(&b).Grow(len(title))
 		_, _ = (&b).Write([]byte(title))
 		// Write Description
-		mission := todo.Description + "\n"
+		mission := todo.Description + ";"
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
 		// Write dueDate
@@ -117,7 +117,7 @@ func (t TodoList) buildRep() string {
 		(&b).Grow(len(dueDate))
 		_, _ = (&b).Write([]byte(dueDate))
 		// Write creationDate
-		creationDate := todo.Creation.convertToString() + ";"
+		creationDate := todo.Creation.convertToString()+ "\n"
 		(&b).Grow(len(creationDate))
 		_, _ = (&b).Write([]byte(creationDate))
 	}
@@ -204,8 +204,8 @@ func main() {
 		fmt.Println(t)
 		fmt.Println("this is the end of the task")
 	}
-	//http.HandleFunc("/", viewHandler)
-	//log.Fatal(http.ListenAndServe(":8080", nil))
+	http.HandleFunc("/", viewHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 
 
 }
