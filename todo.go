@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"net/http"
-	"log"
+	//"log"
 	"html/template"
 	// Think about importing time
 )
@@ -31,10 +31,8 @@ func (t *TodoList) save() error {
 }
 
 func loadTodoList() TodoList {
-	// Add an error when needed
 	file, _ := ioutil.ReadFile(filename)
 	reader := string(file)
-	fmt.Println("reader :", reader)
 	lastNewlineIndex := -1
 	var todos TodoList
 	var todo Todo
@@ -129,10 +127,10 @@ func (t TodoList) buildRep() string {
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	todos := loadTodoList()
-	renderTemplate(w, "view", todos)
+	renderTemplate(w, "view", &todos)
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, t TodoList) {
+func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
 	templates := template.Must(template.ParseFiles("view.html"))
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
@@ -195,9 +193,6 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 */
 func main() {
-	http.HandleFunc("/", viewHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
-	/*fmt.Println("Program running")
 	d1 := stringToDate("01/05/1997")
 	d2 := stringToDate("07/12/2018")
 	a := Todo{"task 1", "perform task 1", d1, d2}
@@ -205,6 +200,12 @@ func main() {
 	t := TodoList{a, b}
 	t.save()
 	c := loadTodoList()
-	fmt.Println(c)
-	*/
+	for _, t := range c {
+		fmt.Println(t)
+		fmt.Println("this is the end of the task")
+	}
+	//http.HandleFunc("/", viewHandler)
+	//log.Fatal(http.ListenAndServe(":8080", nil))
+
+
 }
