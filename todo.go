@@ -136,7 +136,6 @@ func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
 	}
 }
 
-
 /*
 Note : the entered date in the HTML form should satisfy the following Regexp :
 "(0[1-9])|(1[012])"
