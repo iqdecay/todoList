@@ -74,7 +74,7 @@ func stringToTask(s string) Todo {
 			case 3:
 				todo.Creation = stringToDate(fieldValue)
 			case 4:
-				todo.Creation = stringToDate(fieldValue)
+				todo.Due = stringToDate(fieldValue)
 			}
 			lastCommaIndex = index
 		}
@@ -110,6 +110,10 @@ func (t TodoList) buildRep() string {
 		title := todo.Title + ";"
 		(&b).Grow(len(title))
 		_, _ = (&b).Write([]byte(title))
+		// Write Description
+		mission := todo.Description + "\n"
+		(&b).Grow(len(mission))
+		_, _ = (&b).Write([]byte(mission))
 		// Write dueDate
 		dueDate := todo.Due.convertToString() + ";"
 		(&b).Grow(len(dueDate))
@@ -118,10 +122,6 @@ func (t TodoList) buildRep() string {
 		creationDate := todo.Creation.convertToString() + ";"
 		(&b).Grow(len(creationDate))
 		_, _ = (&b).Write([]byte(creationDate))
-		// Write Description
-		mission := todo.Description + "\n"
-		(&b).Grow(len(mission))
-		_, _ = (&b).Write([]byte(mission))
 	}
 	// Write the whole todo
 	return (&b).String()
