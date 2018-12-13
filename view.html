@@ -1,5 +1,24 @@
-<h1>{{.Title}}</h1>
+<h1>List of all todos</h1>
 
-<p>[<a href="/edit/{{.Title}}">You are currently viewing the text document :</a>]</p>
-
-<div>{{printf "%s" .Body}}</div>
+<ul>
+    {{range .}}
+    <li>
+        <h2>
+          {{.Title}}
+        </h2>
+        <h1>
+          <ul>
+            <li>
+              Created : {{.Creation}} </br>
+            </li>
+            <li>
+              Due date : {{.Due}} </br>
+            </li>
+              <li>
+              Description : {{.Description}}
+            </li>
+          </ul>
+        </h1>
+    </li>
+    {{end}}
+</ul>
