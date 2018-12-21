@@ -1,11 +1,12 @@
 package main
 
 import (
-	"io/ioutil"
-	"strings"
-	"net/http"
-	"log"
+	"fmt"
 	"html/template"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
 	// Think about importing time
 )
 
@@ -55,7 +56,7 @@ func stringToTask(s string) Todo {
 	var fieldValue string
 	todo := Todo{}
 	for index, char := range s {
-		if index == len(s) - 1 || char == ';' {
+		if index == len(s)-1 || char == ';' {
 			fieldIndex += 1
 			if fieldIndex != 4 {
 				fieldValue = s[lastCommaIndex+1 : index]
@@ -112,7 +113,7 @@ func (t TodoList) buildRep() string {
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
 		// Write creationDate
-		creation := todo.Creation.convertToString()+ ";"
+		creation := todo.Creation.convertToString() + ";"
 		(&b).Grow(len(creation))
 		_, _ = (&b).Write([]byte(creation))
 		// Write dueDate
@@ -122,6 +123,23 @@ func (t TodoList) buildRep() string {
 	}
 	// Write the whole todo
 	return (&b).String()
+}
+
+func addTodo(list TodoList, t Todo) (TodoList) {
+	list = append(list, t)
+	return list
+}
+
+func saveHandler(w http.ResponseWriter, r *http.Request) {
+	newTodo := r.FormValue("body")
+	fmt.Println(newTodo)
+	d1 := stringToDate("01/05/1997")
+	d2 := stringToDate("07/12/2018")
+	a := Todo{"task 3", "perform task 3", d1, d2}
+	e := TodoList{}
+	e = addTodo(e, a)
+	e.save()
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -145,5 +163,6 @@ func main() {
 	t := TodoList{a, b}
 	t.save()
 	http.HandleFunc("/", viewHandler)
+	http.HandleFunc("/save/", saveHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
