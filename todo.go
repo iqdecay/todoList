@@ -125,7 +125,7 @@ func (t TodoList) buildRep() string {
 	return (&b).String()
 }
 
-func addTodo(list TodoList, t Todo) (TodoList) {
+func addTodo(list TodoList, t Todo) TodoList {
 	list = append(list, t)
 	return list
 }
@@ -139,7 +139,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	e := TodoList{}
 	e = addTodo(e, a)
 	e.save()
-	http.Redirect(w, r, "/", http.StatusFound)
+	renderTemplate(w, "edit", &e)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
@@ -148,7 +148,8 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
-	templates := template.Must(template.ParseFiles("view.html"))
+
+	templates := template.Must(template.ParseFiles("view.html","edit.html"))
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
