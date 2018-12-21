@@ -130,7 +130,7 @@ func addTodo(list TodoList, t Todo) TodoList {
 	return list
 }
 
-func saveHandler(w http.ResponseWriter, r *http.Request) {
+func addHandler(w http.ResponseWriter, r *http.Request) {
 	newTodo := r.FormValue("body")
 	fmt.Println(newTodo)
 	d1 := stringToDate("01/05/1997")
@@ -149,7 +149,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
 
-	templates := template.Must(template.ParseFiles("view.html","edit.html"))
+	templates := template.Must(template.ParseFiles("view.html","add.html"))
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
