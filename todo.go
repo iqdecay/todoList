@@ -131,20 +131,36 @@ func addTodo(list TodoList, t Todo) TodoList {
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
-	newTodo := r.FormValue("body")
-	fmt.Println(newTodo)
 	d1 := stringToDate("01/05/1997")
 	d2 := stringToDate("07/12/2018")
 	a := Todo{"task 3", "perform task 3", d1, d2}
 	e := TodoList{}
 	e = addTodo(e, a)
 	e.save()
-	renderTemplate(w, "edit", &e)
+	renderTemplate(w, "add", &e)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
+}
+
+func saveHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.FormValue("title")
+	date := r.FormValue("due")
+	description := r.FormValue("description")
+	fmt.Println("This is the form value :")
+	fmt.Println(title, date, description)
+	d1 := stringToDate("01/05/1997")
+	d2 := stringToDate("07/12/2018")
+	a := Todo{"task 4", "perform task 4", d1, d2}
+	e := TodoList{}
+	e = addTodo(e, a)
+	e.save()
+
+
+
+
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
@@ -164,6 +180,7 @@ func main() {
 	t := TodoList{a, b}
 	t.save()
 	http.HandleFunc("/", viewHandler)
+	http.HandleFunc("/add/", addHandler)
 	http.HandleFunc("/save/", saveHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

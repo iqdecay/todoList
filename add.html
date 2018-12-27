@@ -1,6 +1,10 @@
-<h1>You are currently editing </h1>
+<h1> Add a new task : </h1>
 
 <form action="/save/" method="POST">
-<div>Insert task title : <input name=title type="text">
+    <ul>
+        <li>Insert task title : <input  name="title" type="text"></li>
+        <li>Insert task description : <input  name="description" type="text"> </li>
+        <li> What is the due date ? <input name="due" type="date"></li>
+    </ul>
 <div><input type="submit" value="Save"></div>
 </form>
