@@ -34,6 +34,9 @@ func (t *TodoList) save() error {
 func loadTodoList() TodoList {
 	file, _ := ioutil.ReadFile(filename)
 	reader := string(file)
+	fmt.Println("Loading : ")
+	fmt.Println(reader)
+	fmt.Println("End of loading")
 	lastNewlineIndex := -1
 	var todos TodoList
 	var todo Todo
@@ -138,7 +141,6 @@ func addHandler(w http.ResponseWriter, r *http.Request) {
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	todos := loadTodoList()
-	fmt.Println("ViewHandler :", todos)
 	renderTemplate(w, "view", &todos)
 }
 
@@ -153,15 +155,15 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	d1 := stringToDate("77/77/7777")
 	todo := Todo{Title: title, Description: description, Creation: creation, Due: d1}
 	todos := loadTodoList()
-	fmt.Println("BEFORE :")
-	fmt.Println("Todos :",todos)
+	//fmt.Println("BEFORE :")
+	//fmt.Println("Todos :",todos)
 	todos = addTodo(todos, todo)
-	fmt.Println("AFTER :")
-	fmt.Println("Todos :",todos)
+	//fmt.Println("AFTER :")
+	//fmt.Println("Todos :",todos)
 	todos.save()
-	todosReloaded := loadTodoList()
-	fmt.Println("Reloaded : ")
-	fmt.Println(todosReloaded)
+	//todosReloaded := loadTodoList()
+	//fmt.Println("Reloaded : ")
+	//fmt.Println(todosReloaded)
 	http.Redirect(w, r, "/view/", http.StatusFound)
 }
 
