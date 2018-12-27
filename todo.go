@@ -7,13 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
-type Date struct {
-	Day, Month, Year string
-}
 
 type Todo struct {
 	Title       string    `json:"title"`
@@ -45,81 +41,6 @@ func loadTodoList() (TodoList) {
 		log.Fatalf("JSON unmarshaling failed: %s", err)
 	}
 	return todos
-}
-
-func stringToTask(s string) Todo {
-	lastCommaIndex := -1
-	fieldIndex := 0
-	var fieldValue string
-	todo := Todo{}
-	for index, char := range s {
-		if index == len(s)-1 || char == ';' {
-			fieldIndex += 1
-			if fieldIndex != 4 {
-				fieldValue = s[lastCommaIndex+1 : index]
-			} else {
-				fieldValue = s[lastCommaIndex+1:]
-			}
-			// This is messy but I don't have any other ideas
-			switch fieldIndex {
-			case 1:
-				todo.Title = fieldValue
-			case 2:
-				todo.Description = fieldValue
-			case 3:
-				todo.Creation = time.Now()
-			case 4:
-				todo.Due = time.Now()
-			}
-			lastCommaIndex = index
-		}
-	}
-	return todo
-}
-
-func (d *Date) convertToString() string {
-	return d.Day + "/" + d.Month + "/" + d.Year
-}
-
-func stringToDate(s string) Date {
-	lastSlashIndex := -1
-	var date []string
-	for index, char := range s {
-		if char == '/' || index == len(s)-1 {
-			if index == len(s)-1 {
-				date = append(date, s[lastSlashIndex+1:])
-			} else {
-				date = append(date, s[lastSlashIndex+1:index])
-			}
-			lastSlashIndex = index
-		}
-	}
-	d, m, y := date[0], date[1], date[2]
-	return Date{d, m, y}
-}
-
-func (t TodoList) buildRep() string {
-	var b strings.Builder
-	for _, todo := range t {
-		// Write title
-		title := todo.Title + ";"
-		(&b).Grow(len(title))
-		_, _ = (&b).Write([]byte(title))
-		// Write Description
-		mission := todo.Description + ";"
-		(&b).Grow(len(mission))
-		_, _ = (&b).Write([]byte(mission))
-		// Write creationDate
-		creation := todo.Creation.String() + ";"
-		(&b).Grow(len(creation))
-		_, _ = (&b).Write([]byte(creation))
-		// Write dueDate
-		due := todo.Due.String() + "\n"
-		(&b).Grow(len(due))
-		_, _ = (&b).Write([]byte(due))
-	}
-	// Write the whole todoList
-	return (&b).String()
 }
 
 func addTodo(list TodoList, t Todo) TodoList {
@@ -169,3 +90,8 @@ func main() {
 	http.HandleFunc("/save/", saveHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
+
+
+
+// TODO :
+
