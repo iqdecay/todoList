@@ -1,12 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -16,10 +16,11 @@ type Date struct {
 }
 
 type Todo struct {
-	Title       string
-	Description string
-	Creation    Date
-	Due         Date
+	Title       string    `json:"title"`
+	Description string    `json:"description,omitempty"`
+	Creation    time.Time `json:"created_at"`
+	Due         time.Time `json:"due_date"`
+	// time.Time() type has no null value since it's a Struct type, so we can't use omitempty
 }
 
 const filename = "tasklist.txt"
@@ -27,29 +28,21 @@ const filename = "tasklist.txt"
 type TodoList []Todo
 
 func (t *TodoList) save() error {
-	content := t.buildRep()
-	return ioutil.WriteFile(filename, []byte(content), 0600)
+	data, err := json.MarshalIndent(t, "", "	")
+	if err != nil {
+		log.Fatalf("JSON marshaling failed: %s", err)
+	}
+	return ioutil.WriteFile(filename, []byte(data), 0600)
 }
 
-func loadTodoList() TodoList {
-	file, _ := ioutil.ReadFile(filename)
-	reader := string(file)
-	fmt.Println("Loading : ")
-	fmt.Println(reader)
-	fmt.Println("End of loading")
-	lastNewlineIndex := -1
+func loadTodoList() (TodoList) {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatalf("Reading tasklist failed : %s", err)
+	}
 	var todos TodoList
-	var todo Todo
-	for index, char := range reader {
-		if index == len(reader)-1 || char == '\n' {
-			if index == len(reader)-1 {
-				todo = stringToTask(reader[lastNewlineIndex+1:])
-			} else {
-				todo = stringToTask(reader[lastNewlineIndex+1 : index])
-			}
-			lastNewlineIndex = index
-			todos = append(todos, todo)
-		}
+	if err = json.Unmarshal(data, &todos); err != nil {
+		log.Fatalf("JSON unmarshaling failed: %s", err)
 	}
 	return todos
 }
@@ -74,9 +67,9 @@ func stringToTask(s string) Todo {
 			case 2:
 				todo.Description = fieldValue
 			case 3:
-				todo.Creation = stringToDate(fieldValue)
+				todo.Creation = time.Now()
 			case 4:
-				todo.Due = stringToDate(fieldValue)
+				todo.Due = time.Now()
 			}
 			lastCommaIndex = index
 		}
@@ -117,15 +110,15 @@ func (t TodoList) buildRep() string {
 		(&b).Grow(len(mission))
 		_, _ = (&b).Write([]byte(mission))
 		// Write creationDate
-		creation := todo.Creation.convertToString() + ";"
+		creation := todo.Creation.String() + ";"
 		(&b).Grow(len(creation))
 		_, _ = (&b).Write([]byte(creation))
 		// Write dueDate
-		due := todo.Due.convertToString() + "\n"
+		due := todo.Due.String() + "\n"
 		(&b).Grow(len(due))
 		_, _ = (&b).Write([]byte(due))
 	}
-	// Write the whole todo
+	// Write the whole todoList
 	return (&b).String()
 }
 
@@ -146,24 +139,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
-	//due := r.FormValue("due")
-	//dueDate := stringToDate(due)
-	now := time.Now()
-	year, month, day := now.Date()
-	creation := Date{strconv.Itoa(day), strconv.Itoa(int(month)), strconv.Itoa(year)}
+	creation := time.Now().AddDate(3, 0, 0)
 	description := r.FormValue("description")
-	d1 := stringToDate("77/77/7777")
-	todo := Todo{Title: title, Description: description, Creation: creation, Due: d1}
+	todo := Todo{Title: title, Description: description, Creation: creation, Due: time.Now().AddDate(1, 1, 1)}
 	todos := loadTodoList()
-	//fmt.Println("BEFORE :")
-	//fmt.Println("Todos :",todos)
 	todos = addTodo(todos, todo)
-	//fmt.Println("AFTER :")
-	//fmt.Println("Todos :",todos)
 	todos.save()
-	//todosReloaded := loadTodoList()
-	//fmt.Println("Reloaded : ")
-	//fmt.Println(todosReloaded)
 	http.Redirect(w, r, "/view/", http.StatusFound)
 }
 
@@ -177,12 +158,12 @@ func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
 }
 
 func main() {
-	d1 := stringToDate("01/05/1997")
-	d2 := stringToDate("07/12/2018")
-	a := Todo{"task 1", "perform task 1", d1, d2}
-	b := Todo{"task 2", "perform task 2", d2, d1}
+	a := Todo{Title: "task 1", Description: "", Creation: time.Now()}
+	b := Todo{"task 2", "perform task 2", time.Now(), time.Now().AddDate(1, 0, 0)}
 	t := TodoList{a, b}
 	t.save()
+	v := loadTodoList()
+	fmt.Println(v)
 	http.HandleFunc("/", viewHandler)
 	http.HandleFunc("/add/", addHandler)
 	http.HandleFunc("/save/", saveHandler)
