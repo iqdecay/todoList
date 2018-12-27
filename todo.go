@@ -6,8 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
-	// Think about importing time
+	"time"
 )
 
 type Date struct {
@@ -21,7 +22,7 @@ type Todo struct {
 	Due         Date
 }
 
-const filename = "tasklist"
+const filename = "tasklist.txt"
 
 type TodoList []Todo
 
@@ -80,7 +81,7 @@ func stringToTask(s string) Todo {
 	return todo
 }
 
-func (d Date) convertToString() string {
+func (d *Date) convertToString() string {
 	return d.Day + "/" + d.Month + "/" + d.Year
 }
 
@@ -131,41 +132,42 @@ func addTodo(list TodoList, t Todo) TodoList {
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
-	d1 := stringToDate("01/05/1997")
-	d2 := stringToDate("07/12/2018")
-	a := Todo{"task 3", "perform task 3", d1, d2}
-	e := TodoList{}
-	e = addTodo(e, a)
-	e.save()
-	renderTemplate(w, "add", &e)
+	todos := loadTodoList()
+	renderTemplate(w, "add", &todos)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	todos := loadTodoList()
+	fmt.Println("ViewHandler :", todos)
 	renderTemplate(w, "view", &todos)
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
-	date := r.FormValue("due")
+	//due := r.FormValue("due")
+	//dueDate := stringToDate(due)
+	now := time.Now()
+	year, month, day := now.Date()
+	creation := Date{strconv.Itoa(day), strconv.Itoa(int(month)), strconv.Itoa(year)}
 	description := r.FormValue("description")
-	fmt.Println("This is the form value :")
-	fmt.Println(title, date, description)
-	d1 := stringToDate("01/05/1997")
-	d2 := stringToDate("07/12/2018")
-	a := Todo{"task 4", "perform task 4", d1, d2}
-	e := TodoList{}
-	e = addTodo(e, a)
-	e.save()
-
-
-
-
+	d1 := stringToDate("77/77/7777")
+	todo := Todo{Title: title, Description: description, Creation: creation, Due: d1}
+	todos := loadTodoList()
+	fmt.Println("BEFORE :")
+	fmt.Println("Todos :",todos)
+	todos = addTodo(todos, todo)
+	fmt.Println("AFTER :")
+	fmt.Println("Todos :",todos)
+	todos.save()
+	todosReloaded := loadTodoList()
+	fmt.Println("Reloaded : ")
+	fmt.Println(todosReloaded)
+	http.Redirect(w, r, "/view/", http.StatusFound)
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
 
-	templates := template.Must(template.ParseFiles("view.html","add.html"))
+	templates := template.Must(template.ParseFiles("view.html", "add.html"))
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
