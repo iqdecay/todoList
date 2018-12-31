@@ -2,28 +2,25 @@
 
 <ul>
     {{range .}}
-    <li>
-        <h2>
+        <li>
             {{.Title}}
-        </h2>
-        <h1>
-            <ul>
-                <li>
-                    Created : {{.Creation}} </br>
-                </li>
-                {{if .Due }}
-                <li>
-                    Due date : {{.Due}} </br>
-                </li>
-                {{end}}
-                {{if .Description}}
-                <li>
-                    Description : {{.Description}}
-                    {{.Description.Show}}
-                </li>
-                {{end}}
-            </ul>
-        </h1>
-    </li>
+            <h1>
+                <ul>
+                    <li>
+                        Created : {{.Creation}} </br>
+                    </li>
+                    {{if .Due }}
+                        <li>
+                            Due date : {{.Due}} </br>
+                        </li>
+                    {{end}}
+                    {{if .Description}}
+                        <li>
+                            Description : {{.Description}}
+                        </li>
+                    {{end}}
+                </ul>
+            </h1>
+        </li>
     {{end}}
 </ul>
