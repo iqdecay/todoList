@@ -78,12 +78,13 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	dueDate, _ := time.Parse(timeFormat, dueString)
 	if dueDate.Before(now) {
 		http.Redirect(w, r, "/add/", http.StatusFound)
+	} else {
+		todo := Todo{Title: title, Description: description, Creation: creation, Due: dueString}
+		todos := loadTodoList()
+		todos = addTodo(todos, todo)
+		todos.save()
+		http.Redirect(w, r, "/view/", http.StatusFound)
 	}
-	todo := Todo{Title: title, Description: description, Creation: creation, Due: dueString}
-	todos := loadTodoList()
-	todos = addTodo(todos, todo)
-	todos.save()
-	http.Redirect(w, r, "/view/", http.StatusFound)
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
