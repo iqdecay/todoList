@@ -8,6 +8,7 @@ of the http and html/template packages in Golang.
 Todo :
 - [x] Display only non-empty fields
 - [x] Date and time handling
+- [ ] Add "add" button
 - [ ] Add input checking
 - [ ] Prettier UI
 - [ ] Editing tasks
