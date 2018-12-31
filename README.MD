@@ -12,10 +12,13 @@ go build todo.go
 ./todo 
 ```
 Functions : 
-- Seeing the tasklist :
-    Go to http://localhost:8080/
+- Seeing the tasklist : 
+
+    [http://localhost:8080/](http://localhost:8080/)
+     
 - Adding a task : 
-    Go to htt://localhost:8080/add/
+
+    [http://localhost:8080/add/](http://localhost:8080/)
 
     
 
@@ -28,3 +31,6 @@ Todo :
 - [ ] Editing tasks
 - [ ] Deleting tasks
 
+
+
+[]: http://localhost:8080/
