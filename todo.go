@@ -78,9 +78,15 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title")
-	creation := time.Now().Format(timeFormat)
+	nowString := time.Now().Format(timeFormat)
+	now, _ := time.Parse(timeFormat, nowString)
+	creation := now.Format(timeFormat)
 	description := r.FormValue("description")
 	dueString := r.FormValue("due")
+	dueDate, _ := time.Parse(timeFormat, dueString)
+	if dueDate.Before(now) {
+		http.Redirect(w, r, "/add/", http.StatusFound)
+	}
 	todo := Todo{Title: title, Description: Description{true, description}, Creation: creation, Due: dueString}
 	todos := loadTodoList()
 	todos = addTodo(todos, todo)
