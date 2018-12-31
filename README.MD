@@ -6,7 +6,7 @@ It is build using a local web server, and is an exercise to test my understandin
 of the http and html/template packages in Golang. 
 
 Todo :
-- [ ] Display ony non-empty fields
+- [x] Display only non-empty fields
 - [ ] Date and time handling
 - [ ] Prettier UI
 - [ ] Editing tasks
