@@ -33,9 +33,11 @@ func (t *TodoList) save() error {
 
 func loadTodoList() TodoList {
 	var todos TodoList
+	// if the file doesn't exist, the tasklist is empty
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		return todos
 	} else {
+		// otherwise we process the contained data
 		data, err := ioutil.ReadFile(filename)
 		if err != nil {
 			log.Fatalf("Reading tasklist failed : #{err}")
@@ -54,11 +56,13 @@ func addTodo(list TodoList, t Todo) TodoList {
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
+	// it is only used to display the form, treatment is made in the saveHandler
 	todos := loadTodoList()
 	renderTemplate(w, "add", &todos)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
+	// display the current tasklist
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
 }
@@ -71,10 +75,10 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 	dueString := r.FormValue("due")
 	dueDate, _ := time.Parse(timeFormat, dueString)
-	if dueDate.Before(now) {
+	if dueDate.Before(now) { // Check if the dueDate makes sense
 		http.Redirect(w, r, "/add/", http.StatusFound)
 	} else {
-		todo := Todo{Title: title, Description: description, Creation: creation, Due: dueString}
+		todo := Todo{title, description, creation, dueString}
 		todos := loadTodoList()
 		todos = addTodo(todos, todo)
 		todos.save()
@@ -83,7 +87,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, t *TodoList) {
-
 	templates := template.Must(template.ParseFiles("view.html", "add.html"))
 	err := templates.ExecuteTemplate(w, tmpl+".html", t)
 	if err != nil {
