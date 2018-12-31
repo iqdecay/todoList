@@ -15,9 +15,8 @@ const timeFormat = "2006-01-02"
 type Todo struct {
 	Title       string `json:"title"`
 	Description string `json:"description,omitempty"`
-	Creation    string `json:"created_at"`
-	Due         string `json:"due_date"`
-	// time.Time() type has no null value since it's a Struct type, so we can't use omitempty
+	Creation    string `json:"created_at,omitempty"`
+	Due         string `json:"due_date,omitempty"`
 }
 
 const filename = "tasklist.txt"
@@ -30,10 +29,6 @@ func (t *TodoList) save() error {
 		log.Fatalf("JSON marshaling failed: %s", err)
 	}
 	return ioutil.WriteFile(filename, []byte(data), 0600)
-}
-
-func (t *TodoList) Test() string {
-	return "Hello this is working"
 }
 
 func loadTodoList() TodoList {
