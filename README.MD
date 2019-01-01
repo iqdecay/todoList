@@ -26,7 +26,7 @@ Todo :
 - [x] Display only non-empty fields
 - [x] Date and time handling
 - [ ] Add input checking
-- [ ] Add "add" button
+- [x] Add "add" button
 - [ ] Prettier UI
 - [ ] Editing tasks
 - [ ] Deleting tasks
