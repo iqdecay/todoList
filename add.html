@@ -1,19 +1,25 @@
+<style>
+
+
+</style>
 <h1> Add a new task : </h1>
 
 <form action="/save/" method="POST">
-    <ul>
-        <li>Insert task title : <input name="title" type="text"></li>
-        <li>Insert task description : <input name="description" type="text"></li>
-        <li> What is the due date ? <input name="due" type="date"></li>
+    <ul style="list-style-type: none">
+        <li><input name="title" type="text" placeholder="Task title"></li>
+        <li><input name="description" type="text" placeholder="Task Description"></li>
+        <br> What is the due date ? <br><br>
+        <input name="due" type="date">
+        <br>
+        <li><div><input type="submit" value="Save"></div></li>
+        <br>
+        <li><button id="viewButton"> Return to the list</button></li>
     </ul>
-    <div><input type="submit" value="Save"></div>
 </form>
 
 
-
-<button id="viewButton"> Return to the list </button>
 <script type="text/javascript">
-    document.getElementById("viewButton").onclick = function() {
+    document.getElementById("viewButton").onclick = function () {
         location.href = "http://localhost:8080/view/"
     };
 </script>
