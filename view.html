@@ -1,4 +1,8 @@
 <h1>List of all todos</h1>
+{{if not .}}
+    There are no todos !
+
+{{end}}
 
 <ul>
     {{range .}}
@@ -24,3 +28,12 @@
         </li>
     {{end}}
 </ul>
+
+
+
+<button id="addButton"> Add a todo </button>
+<script type="text/javascript">
+    document.getElementById("addButton").onclick = function() {
+        location.href = "http://localhost:8080/add/"
+    };
+</script>
