@@ -1,7 +1,3 @@
-
- [Report Card](https://goreportcard.com/badge/github.com/mithridate-lulwat/todoList)](https://goreportcard.com/report/github.com/mithridate-lulwat/todoList)
-
-
 # TodoList
 
 This is a Todo list app that allows for adding tasks to a list, deleting and
