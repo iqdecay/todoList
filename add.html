@@ -11,15 +11,15 @@
         <br> What is the due date ? <br><br>
         <input name="due" type="date">
         <br>
-        <li><div><input type="submit" value="Save"></div></li>
+        <li>
+            <div>
+                <button type="submit" name="submit" value="saveButton"> Save this todo</button>
+            </div>
+        </li>
         <br>
-        <li><button id="viewButton"> Return to the list</button></li>
+        <li>
+            <button type="submit" name="submit" value="returnButton"> Return to the list</button>
+        </li>
     </ul>
 </form>
 
-
-<script type="text/javascript">
-    document.getElementById("viewButton").onclick = function () {
-        location.href = "http://localhost:8080/view/"
-    };
-</script>

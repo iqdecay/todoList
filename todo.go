@@ -75,7 +75,13 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 	dueString := r.FormValue("due")
 	dueDate, _ := time.Parse(timeFormat, dueString)
-	if dueDate.Before(now) { // Check if the dueDate makes sense
+	pressedButton := r.FormValue("submit")
+
+	if pressedButton == "returnButton" {
+		http.Redirect(w, r, "/view/", http.StatusFound)
+		return
+	}
+	if dueDate.Before(now) && pressedButton == "saveButton" { // Check if the dueDate makes sense
 		http.Redirect(w, r, "/add/", http.StatusFound)
 	} else {
 		todo := Todo{title, description, creation, dueString}
