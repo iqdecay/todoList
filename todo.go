@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -63,6 +64,19 @@ func addTodo(todos TodoList, t Todo) TodoList {
 	todos.List = append(todos.List, t)
 	return todos
 }
+func deleteTodo(todos TodoList, id int) TodoList {
+	// Delete the todo whose id is id and return the todolist
+	var deleteIndex int
+	list := todos.List
+	for k, v := range todos.List {
+		if v.Id == id {
+			deleteIndex = k
+			break
+		}
+	}
+	todos.List = append(list[:deleteIndex], list[deleteIndex+1:]...)
+	return todos
+}
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
 	// it is only used to display the form, treatment is made in the saveHandler
@@ -74,6 +88,16 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// display the current tasklist
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
+}
+
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	idString := r.URL.Path[len("/delete/"):]
+	id, _ := strconv.Atoi(idString)
+	todos := loadTodoList()
+	todos = deleteTodo(todos, id)
+	todos.save()
+	log.Println("id :", id)
+	http.Redirect(w, r, "/view/", http.StatusFound)
 
 }
 
@@ -118,5 +142,6 @@ func main() {
 	http.HandleFunc("/", viewHandler)
 	http.HandleFunc("/add/", addHandler)
 	http.HandleFunc("/save/", saveHandler)
+	http.HandleFunc("/delete/", deleteHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
