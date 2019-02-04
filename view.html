@@ -1,37 +1,40 @@
 <h1>List of all todos</h1>
-{{if eq (len .) 0}}
+{{if eq (len .List) 0}}
     There are no todos !
-
 {{end}}
 
 <ul style="list-style-type: square">
-    {{range .}}
+    {{range .List}}
         <li>
             {{.Title}}
-                <ul style="list-style-type: circle">
+            <ul style="list-style-type: circle">
+                <li>
+                    Created : {{.Creation}} </br>
+                </li>
+                {{if .Due }}
                     <li>
-                        Created : {{.Creation}} </br>
+                        Due date : {{.Due}} </br>
                     </li>
-                    {{if .Due }}
-                        <li>
-                            Due date : {{.Due}} </br>
-                        </li>
-                    {{end}}
-                    {{if .Description}}
-                        <li>
-                            Description : {{.Description}}
-                        </li>
-                    {{end}}
-                </ul>
+                {{end}}
+                {{if .Description}}
+                    <li>
+                        Description : {{.Description}}
+                    </li>
+                {{end}}
+                <form action="/delete/{{.Id}}" method="POST">
+                <button type="submit" name="delete"> Delete</button>
+                    </form>
+                </br>
+            </ul>
         </li>
+
     {{end}}
 </ul>
 
 
-
-<button id="addButton"> Add a todo </button>
+<button id="addButton"> Add a todo</button>
 <script type="text/javascript">
-    document.getElementById("addButton").onclick = function() {
+    document.getElementById("addButton").onclick = function () {
         location.href = "http://localhost:8080/add/"
     };
 </script>
