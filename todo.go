@@ -17,13 +17,13 @@ type Todo struct {
 	Description string `json:"description,omitempty"`
 	Creation    string `json:"created_at,omitempty"`
 	Due         string `json:"due_date,omitempty"`
-	id          int    `json:"unique_id"`
+	Id          int    `json:"unique_id"`
 }
 
-const filename = "tasklist.txt"
+const filename = "tas.List.txt"
 
 type TodoList struct {
-	list []Todo
+	List  []Todo
 	maxId int
 }
 
@@ -37,14 +37,14 @@ func (t *TodoList) save() error {
 
 func loadTodoList() TodoList {
 	var todos TodoList
-	// if the file doesn't exist, the tasklist is empty
+	// if the file doesn't exist, the tas.List is empty
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		return todos
 	} else {
 		// otherwise we process the contained data
 		data, err := ioutil.ReadFile(filename)
 		if err != nil {
-			log.Fatalf("Reading tasklist failed : #{err}")
+			log.Fatalf("Reading tas.List failed : #{err}")
 		}
 		if err = json.Unmarshal(data, &todos); err != nil {
 			log.Fatalf("JSON unmarshaling failed: %s", err)
@@ -55,12 +55,12 @@ func loadTodoList() TodoList {
 }
 
 func addTodo(todos TodoList, t Todo) TodoList {
-	if t.id > todos.maxId {
-		todos.maxId = t.id
-	} else if t.id == todos.maxId {
+	if t.Id > todos.maxId {
+		todos.maxId = t.Id
+	} else if t.Id == todos.maxId {
 		panic("maxId not coherent")
 	}
-	todos.list = append(todos.list, t)
+	todos.List = append(todos.List, t)
 	return todos
 }
 
