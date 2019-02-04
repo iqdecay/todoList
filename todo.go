@@ -88,6 +88,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// display the current tasklist
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
+
 }
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -118,7 +119,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("before :", dueDate.Before(now))
 	if dueDate.Before(now) && pressedButton == "saveButton" { // Check if the dueDate makes sense
-
 		http.Redirect(w, r, "/add/", http.StatusFound)
 	} else {
 		todos := loadTodoList()
