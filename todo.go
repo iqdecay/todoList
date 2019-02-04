@@ -17,11 +17,15 @@ type Todo struct {
 	Description string `json:"description,omitempty"`
 	Creation    string `json:"created_at,omitempty"`
 	Due         string `json:"due_date,omitempty"`
+	id          int    `json:"unique_id"`
 }
 
 const filename = "tasklist.txt"
 
-type TodoList []Todo
+type TodoList struct {
+	list []Todo
+	maxId int
+}
 
 func (t *TodoList) save() error {
 	data, err := json.MarshalIndent(t, "", "	")
@@ -50,9 +54,14 @@ func loadTodoList() TodoList {
 
 }
 
-func addTodo(list TodoList, t Todo) TodoList {
-	list = append(list, t)
-	return list
+func addTodo(todos TodoList, t Todo) TodoList {
+	if t.id > todos.maxId {
+		todos.maxId = t.id
+	} else if t.id == todos.maxId {
+		panic("maxId not coherent")
+	}
+	todos.list = append(todos.list, t)
+	return todos
 }
 
 func addHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +74,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// display the current tasklist
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
+
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +84,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	creation := now.Format(timeFormat)
 	description := r.FormValue("description")
 	dueString := r.FormValue("due")
+	log.Println(dueString)
 	dueDate, _ := time.Parse(timeFormat, dueString)
 	pressedButton := r.FormValue("submit")
 
@@ -81,11 +92,14 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/view/", http.StatusFound)
 		return
 	}
+	log.Println("before :", dueDate.Before(now))
 	if dueDate.Before(now) && pressedButton == "saveButton" { // Check if the dueDate makes sense
+
 		http.Redirect(w, r, "/add/", http.StatusFound)
 	} else {
-		todo := Todo{title, description, creation, dueString}
 		todos := loadTodoList()
+		id := todos.maxId + 1
+		todo := Todo{title, description, creation, dueString, id}
 		todos = addTodo(todos, todo)
 		todos.save()
 		http.Redirect(w, r, "/view/", http.StatusFound)
