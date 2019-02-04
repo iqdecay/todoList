@@ -29,7 +29,7 @@ Todo :
 - [x] Add "add" button
 - [ ] Prettier UI
 - [ ] Editing tasks
-- [ ] Deleting tasks
+- [x] Deleting tasks
 
 
 
