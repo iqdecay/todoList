@@ -118,7 +118,8 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("before :", dueDate.Before(now))
-	if dueDate.Before(now) && pressedButton == "saveButton" { // Check if the dueDate makes sense
+	// Check if input is correct
+	if (dueDate.Before(now) || title == "") && pressedButton == "saveButton" {
 		http.Redirect(w, r, "/add/", http.StatusFound)
 	} else {
 		todos := loadTodoList()
