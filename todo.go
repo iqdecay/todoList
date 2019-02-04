@@ -65,6 +65,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// display the current tasklist
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
+
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +82,8 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/view/", http.StatusFound)
 		return
 	}
-	if dueDate.Before(now) && pressedButton == "saveButton" { // Check if the dueDate makes sense
+	// if the dueDate makes sense and the title is not empty
+	if (dueDate.Before(now) || title == "") && pressedButton == "saveButton" {
 		http.Redirect(w, r, "/add/", http.StatusFound)
 	} else {
 		todo := Todo{title, description, creation, dueString}
