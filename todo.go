@@ -22,7 +22,6 @@ type Todo struct {
 	Id          int    `json:"unique_id"`
 }
 
-
 type TodoList struct {
 	List  []Todo
 	maxId int
@@ -38,14 +37,14 @@ func (t *TodoList) save() error {
 
 func loadTodoList() TodoList {
 	var todos TodoList
-	// if the file doesn't exist, the tas.List is empty
+	// if the file doesn't exist, the taskList is empty
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		return todos
 	} else {
 		// otherwise we process the contained data
 		data, err := ioutil.ReadFile(filename)
 		if err != nil {
-			log.Fatalf("Reading tas.List failed : #{err}")
+			log.Fatalf("Reading taskList failed : #{err}")
 		}
 		if err = json.Unmarshal(data, &todos); err != nil {
 			log.Fatalf("JSON unmarshaling failed: %s", err)
