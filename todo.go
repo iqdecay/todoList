@@ -12,6 +12,7 @@ import (
 )
 
 const timeFormat = "2006-01-02"
+const filename = "tasklist.txt"
 
 type Todo struct {
 	Title       string `json:"title"`
@@ -21,7 +22,6 @@ type Todo struct {
 	Id          int    `json:"unique_id"`
 }
 
-const filename = "tas.List.txt"
 
 type TodoList struct {
 	List  []Todo
@@ -52,7 +52,6 @@ func loadTodoList() TodoList {
 		}
 		return todos
 	}
-
 }
 
 func addTodo(todos TodoList, t Todo) TodoList {
@@ -64,6 +63,7 @@ func addTodo(todos TodoList, t Todo) TodoList {
 	todos.List = append(todos.List, t)
 	return todos
 }
+
 func deleteTodo(todos TodoList, id int) TodoList {
 	// Delete the todo whose id is id and return the todolist
 	var deleteIndex int
@@ -88,7 +88,6 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	// display the current tasklist
 	todos := loadTodoList()
 	renderTemplate(w, "view", &todos)
-
 }
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -99,7 +98,6 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 	todos.save()
 	log.Println("id :", id)
 	http.Redirect(w, r, "/view/", http.StatusFound)
-
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
@@ -117,6 +115,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/view/", http.StatusFound)
 		return
 	}
+
 	log.Println("before :", dueDate.Before(now))
 	// Check if input is correct
 	if (dueDate.Before(now) || title == "") && pressedButton == "saveButton" {
